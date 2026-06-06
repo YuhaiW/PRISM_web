@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(124,58,237,.10), transparent 60%),
+      radial-gradient(1000px 500px at 0% 120%, rgba(37,99,235,.10), transparent 60%),
+      #ffffff;
+    color: #15171c;
+    position: relative;
+    overflow: hidden;
+  }
+  .accent { position: absolute; top: 0; left: 0; right: 0; height: 10px;
+    background: linear-gradient(90deg, #2563eb, #7c3aed); }
+  .wrap { padding: 70px 80px 60px; height: 100%; display: flex; flex-direction: column; }
+  .title { font-size: 158px; font-weight: 900; letter-spacing: -.01em; line-height: 1;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .subtitle { font-size: 40px; font-weight: 700; margin-top: 14px; color: #20242c; }
+  .badge { display: inline-block; margin-top: 22px; font-size: 24px; font-weight: 800;
+    color: #fff; background: linear-gradient(90deg, #2563eb, #7c3aed);
+    padding: 8px 22px; border-radius: 999px; letter-spacing: .03em; }
+  .spacer { flex: 1; }
+  .stats { display: flex; gap: 22px; }
+  .pill { background: #fff; border: 1px solid #e7e7ef; border-radius: 18px;
+    padding: 18px 26px; box-shadow: 0 6px 22px rgba(20,30,60,.06); }
+  .pill .n { font-size: 44px; font-weight: 900; color: #2563eb; line-height: 1; }
+  .pill .l { font-size: 19px; color: #5a5f6a; margin-top: 8px; font-weight: 500; }
+  .foot { margin-top: 30px; font-size: 22px; color: #3a3f49; font-weight: 600; }
+  .foot .aff { color: #7a8090; font-weight: 500; font-size: 20px; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <div class="accent"></div>
+  <div class="wrap">
+    <div>
+      <div class="title">PRISM</div>
+      <div class="subtitle">PRior-guided Imagination Sampling in World Models</div>
+      <span class="badge">CoRL 2026</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="stats">
+      <div class="pill"><div class="n">+35 pp</div><div class="l">Cube success rate</div></div>
+      <div class="pill"><div class="n">+32 pp</div><div class="l">PushT success rate</div></div>
+      <div class="pill"><div class="n">1.0M</div><div class="l">prior-head params · ~1% of WM</div></div>
+      <div class="pill"><div class="n">≈0 ms</div><div class="l">added inference cost</div></div>
+    </div>
+    <div class="foot">
+      Wang · Xia · Zhou · Hu · Shi · Du · Ye
+      <div class="aff">Northeastern University · UC Berkeley · Qiyuan Lab · University of Florida</div>
+    </div>
+  </div>
+</body>
+</html>
