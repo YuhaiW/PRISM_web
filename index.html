@@ -195,7 +195,8 @@
     .eq-block { background: #f7f8fa; border: 1px solid var(--soft-border); border-radius: 14px; padding: 1.1rem 1.3rem; margin: 1.4rem auto 0; max-width: 820px; overflow-x: auto; }
 
     /* Responsive 16:9 video embed */
-    .video-wrap { position: relative; width: 100%; max-width: 900px; margin: 1.5rem auto 0; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--soft-border); box-shadow: 0 8px 26px rgba(0,0,0,.12); background: #000; }
+    .video-outer { max-width: 1100px; margin: 0 auto; }
+    .video-wrap { position: relative; width: 100%; height: 0; padding-top: 56.25%; border-radius: 14px; overflow: hidden; border: 1px solid var(--soft-border); box-shadow: 0 10px 30px rgba(0,0,0,.16); background: #000; }
     .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
     /* Results table — booktabs style */
@@ -324,6 +325,20 @@
     </div>
   </section>
 
+  <!-- ===================== OVERVIEW VIDEO ===================== -->
+  <section class="section" style="padding-top:1.5rem;">
+    <div class="video-outer">
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/fnBii-Q5IFo"
+                title="PRISM: PRior-guided Imagination Sampling in World Models (CoRL 2026)"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== TEASER ===================== -->
   <section class="hero teaser">
     <div class="container is-max-desktop">
@@ -350,21 +365,6 @@
           <div class="stat-pill"><div class="num">1.0M</div><div class="lab">prior-head params<br>(~1% of world model)</div></div>
           <div class="stat-pill"><div class="num">≈0 ms</div><div class="lab">added inference cost<br>per plan step</div></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== OVERVIEW VIDEO ===================== -->
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <div class="has-text-centered"><h2 class="title is-3 sec-title">Overview Video</h2></div>
-      <div class="video-wrap">
-        <iframe src="https://www.youtube-nocookie.com/embed/fnBii-Q5IFo"
-                title="PRISM: PRior-guided Imagination Sampling in World Models (CoRL 2026)"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen loading="lazy"></iframe>
       </div>
     </div>
   </section>
