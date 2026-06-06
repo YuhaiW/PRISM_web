@@ -221,6 +221,16 @@
     .task-tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--prism-blue); border-radius: 6px; padding: .12em .5em; margin-right: .4em; }
     .task-tag.cube { background: #7c3aed; }
 
+    /* Two-column comparison: left = Cube, right = PushT */
+    .cmp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8rem; margin-top: 1.6rem; }
+    @media (max-width: 768px) { .cmp-cols { grid-template-columns: 1fr; } }
+    .cmp-col-head { text-align: center; font-weight: 700; font-size: 1.1rem; margin-bottom: .9rem; }
+    .cmp-col-head .dot { display: inline-block; width: .62em; height: .62em; border-radius: 50%; margin-right: .45em; vertical-align: middle; }
+    .cmp-col-head .dot.cube { background: #7c3aed; }
+    .cmp-col-head .dot.pusht { background: var(--prism-blue); }
+    .cmp-col .gif-card { margin-bottom: 1.2rem; }
+    .cmp-col .gif-card:last-child { margin-bottom: 0; }
+
     /* Real-robot callout */
     .robot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; margin-top: 1.4rem; }
     @media (max-width: 768px) { .robot-grid { grid-template-columns: 1fr; } }
@@ -514,13 +524,21 @@
         commits to goal-directed actions instead of spraying its budget.
       </p>
 
-      <div class="gif-grid">
-        <div class="gif-card"><img src="static/images/cmp_cube_env2.gif"  alt="Cube comparison env 2"  loading="lazy"><div class="cap"><span class="task-tag cube">Cube</span> Vanilla fails &rarr; PRISM succeeds</div></div>
-        <div class="gif-card"><img src="static/images/cmp_cube_env5.gif"  alt="Cube comparison env 5"  loading="lazy"><div class="cap"><span class="task-tag cube">Cube</span> Vanilla fails &rarr; PRISM succeeds</div></div>
-        <div class="gif-card"><img src="static/images/cmp_cube_env10.gif" alt="Cube comparison env 10" loading="lazy"><div class="cap"><span class="task-tag cube">Cube</span> Vanilla fails &rarr; PRISM succeeds</div></div>
-        <div class="gif-card"><img src="static/images/cmp_pusht_env0.gif" alt="PushT comparison env 0" loading="lazy"><div class="cap"><span class="task-tag">PushT</span> Vanilla fails &rarr; PRISM succeeds</div></div>
-        <div class="gif-card"><img src="static/images/cmp_pusht_env3.gif" alt="PushT comparison env 3" loading="lazy"><div class="cap"><span class="task-tag">PushT</span> Vanilla fails &rarr; PRISM succeeds</div></div>
-        <div class="gif-card"><img src="static/images/cmp_pusht_env9.gif" alt="PushT comparison env 9" loading="lazy"><div class="cap"><span class="task-tag">PushT</span> Vanilla fails &rarr; PRISM succeeds</div></div>
+      <div class="cmp-cols">
+        <!-- Left column: Cube -->
+        <div class="cmp-col">
+          <div class="cmp-col-head"><span class="dot cube"></span>Cube</div>
+          <div class="gif-card"><img src="static/images/cmp_cube_env2.gif"  alt="Cube comparison env 2"  loading="lazy"><div class="cap">Vanilla fails &rarr; PRISM succeeds</div></div>
+          <div class="gif-card"><img src="static/images/cmp_cube_env5.gif"  alt="Cube comparison env 5"  loading="lazy"><div class="cap">Vanilla fails &rarr; PRISM succeeds</div></div>
+          <div class="gif-card"><img src="static/images/cmp_cube_env10.gif" alt="Cube comparison env 10" loading="lazy"><div class="cap">Vanilla fails &rarr; PRISM succeeds</div></div>
+        </div>
+        <!-- Right column: PushT -->
+        <div class="cmp-col">
+          <div class="cmp-col-head"><span class="dot pusht"></span>PushT</div>
+          <div class="gif-card"><img src="static/images/cmp_pusht_env0.gif" alt="PushT comparison env 0" loading="lazy"><div class="cap">Vanilla fails &rarr; PRISM succeeds</div></div>
+          <div class="gif-card"><img src="static/images/cmp_pusht_env3.gif" alt="PushT comparison env 3" loading="lazy"><div class="cap">Vanilla fails &rarr; PRISM succeeds</div></div>
+          <div class="gif-card"><img src="static/images/cmp_pusht_env9.gif" alt="PushT comparison env 9" loading="lazy"><div class="cap">Vanilla fails &rarr; PRISM succeeds</div></div>
+        </div>
       </div>
     </div>
   </section>
