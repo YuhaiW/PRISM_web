@@ -234,13 +234,13 @@
     .cmp-col .gif-card { margin-bottom: 1.2rem; }
     .cmp-col .gif-card:last-child { margin-bottom: 0; }
 
-    /* Real-robot callout */
-    .robot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; margin-top: 1.4rem; }
-    @media (max-width: 768px) { .robot-grid { grid-template-columns: 1fr; } }
-    .robot-card { background: #fff; border: 1px solid var(--soft-border); border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
-    .robot-card h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: .3rem; }
-    .robot-card .sr { font-size: 2rem; font-weight: 800; color: var(--prism-blue); }
-    .robot-card .meta { color: var(--muted); font-size: .92rem; line-height: 1.55; margin-top: .3rem; }
+    /* Real-robot video gallery */
+    .subhead { text-align: center; font-weight: 700; font-size: 1.08rem; color: #2a2e35; margin: 2rem 0 .2rem; }
+    .vid-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; margin-top: 1rem; }
+    @media (max-width: 768px) { .vid-grid { grid-template-columns: 1fr; } }
+    .vid-card { background: #fff; border: 1px solid var(--soft-border); border-radius: 12px; padding: .55rem; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .vid-card video { width: 100%; border-radius: 8px; display: block; background: #000; }
+    .vid-card .cap { font-size: .88rem; color: var(--muted); margin-top: .5rem; text-align: center; }
   </style>
 </head>
 <body>
@@ -568,23 +568,44 @@
     <div class="container is-max-desktop">
       <div class="has-text-centered"><h2 class="title is-3 sec-title">Real-robot transfer</h2></div>
       <p class="gallery-intro" style="margin-top:1rem;">
-        The same train-and-fuse pipeline runs on hardware with real-time planning &mdash; no simulator-specific tricks.
+        The same train-and-fuse pipeline runs on real hardware with real-time planning &mdash; no simulator-specific tricks.
       </p>
-      <div class="figure-wrap" style="margin-top:1.6rem;">
-        <img src="static/images/realrobot_franka_pusht.png" alt="Franka PushT real-robot keyframes">
-        <p class="figure-caption">
-          <b>Franka PushT.</b> Keyframes (left&rarr;right) of an example PRISM-MPPI episode on a Franka Research 3 arm
-          pushing a T-block toward its goal pose, observed from a single third-person RealSense camera.
-        </p>
+
+      <div class="subhead">Successful rollouts</div>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video src="static/videos/realrobot_pusht_success1.mp4" poster="static/images/poster_pusht_success1.jpg"
+                 autoplay muted loop playsinline controls preload="metadata"></video>
+          <div class="cap"><span class="task-tag">PushT</span> real-robot rollout</div>
+        </div>
+        <div class="vid-card">
+          <video src="static/videos/realrobot_pusht_success2.mp4" poster="static/images/poster_pusht_success2.jpg"
+                 autoplay muted loop playsinline controls preload="metadata"></video>
+          <div class="cap"><span class="task-tag">PushT</span> real-robot rollout</div>
+        </div>
+        <div class="vid-card">
+          <video src="static/videos/realrobot_cube_success1.mp4" poster="static/images/poster_cube_success1.jpg"
+                 autoplay muted loop playsinline controls preload="metadata"></video>
+          <div class="cap"><span class="task-tag cube">Cube</span> real-robot rollout</div>
+        </div>
+        <div class="vid-card">
+          <video src="static/videos/realrobot_cube_success2.mp4" poster="static/images/poster_cube_success2.jpg"
+                 autoplay muted loop playsinline controls preload="metadata"></video>
+          <div class="cap"><span class="task-tag cube">Cube</span> real-robot rollout</div>
+        </div>
       </div>
 
-      <div style="display:flex; justify-content:center; margin-top:1.6rem;">
-        <div class="robot-card" style="max-width:560px; text-align:center;">
-          <h3>Franka PushT</h3>
-          <div class="sr">35%</div>
-          <p class="meta">Trained on Meta&nbsp;Quest&nbsp;3 teleoperation data, with real-time planning on an RTX&nbsp;5080.
-          Success rate over 20 trials &mdash; the same train-and-fuse pipeline used in simulation, transferred to hardware
-          with no simulator-specific tricks.</p>
+      <div class="subhead">Failure cases</div>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video src="static/videos/realrobot_pusht_failure.mp4" poster="static/images/poster_pusht_failure.jpg"
+                 autoplay muted loop playsinline controls preload="metadata"></video>
+          <div class="cap"><span class="task-tag">PushT</span> failure case</div>
+        </div>
+        <div class="vid-card">
+          <video src="static/videos/realrobot_cube_failure.mp4" poster="static/images/poster_cube_failure.jpg"
+                 autoplay muted loop playsinline controls preload="metadata"></video>
+          <div class="cap"><span class="task-tag cube">Cube</span> failure case</div>
         </div>
       </div>
     </div>
