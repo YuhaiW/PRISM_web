@@ -231,8 +231,8 @@
     .cmp-col-head .dot { display: inline-block; width: .62em; height: .62em; border-radius: 50%; margin-right: .45em; vertical-align: middle; }
     .cmp-col-head .dot.cube { background: #7c3aed; }
     .cmp-col-head .dot.pusht { background: var(--prism-blue); }
-    .cmp-col .gif-card { margin-bottom: 1.2rem; }
-    .cmp-col .gif-card:last-child { margin-bottom: 0; }
+    .cmp-col .gif-card, .cmp-col .vid-card { margin-bottom: 1.2rem; }
+    .cmp-col .gif-card:last-child, .cmp-col .vid-card:last-child { margin-bottom: 0; }
 
     /* Real-robot video gallery */
     .subhead { text-align: center; font-weight: 700; font-size: 1.08rem; color: #2a2e35; margin: 2rem 0 .2rem; }
@@ -766,26 +766,30 @@
       </p>
 
       <div class="subhead">Successful rollouts</div>
-      <div class="vid-grid">
-        <div class="vid-card">
-          <video src="static/videos/realrobot_pusht_success1.mp4" poster="static/images/poster_pusht_success1.jpg"
-                 autoplay muted loop playsinline controls preload="metadata"></video>
-          <div class="cap"><span class="task-tag">PushT</span> real-robot rollout</div>
+      <div class="cmp-cols">
+        <!-- Left column: PushT -->
+        <div class="cmp-col">
+          <div class="cmp-col-head"><span class="dot pusht"></span>PushT</div>
+          <div class="vid-card">
+            <video src="static/videos/realrobot_pusht_success1.mp4" poster="static/images/poster_pusht_success1.jpg"
+                   autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="vid-card">
+            <video src="static/videos/realrobot_pusht_success2.mp4" poster="static/images/poster_pusht_success2.jpg"
+                   autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
         </div>
-        <div class="vid-card">
-          <video src="static/videos/realrobot_pusht_success2.mp4" poster="static/images/poster_pusht_success2.jpg"
-                 autoplay muted loop playsinline controls preload="metadata"></video>
-          <div class="cap"><span class="task-tag">PushT</span> real-robot rollout</div>
-        </div>
-        <div class="vid-card">
-          <video src="static/videos/realrobot_cube_success1.mp4" poster="static/images/poster_cube_success1.jpg"
-                 autoplay muted loop playsinline controls preload="metadata"></video>
-          <div class="cap"><span class="task-tag cube">Cube</span> real-robot rollout</div>
-        </div>
-        <div class="vid-card">
-          <video src="static/videos/realrobot_cube_success2.mp4" poster="static/images/poster_cube_success2.jpg"
-                 autoplay muted loop playsinline controls preload="metadata"></video>
-          <div class="cap"><span class="task-tag cube">Cube</span> real-robot rollout</div>
+        <!-- Right column: Cube -->
+        <div class="cmp-col">
+          <div class="cmp-col-head"><span class="dot cube"></span>Cube</div>
+          <div class="vid-card">
+            <video src="static/videos/realrobot_cube_success1.mp4" poster="static/images/poster_cube_success1.jpg"
+                   autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="vid-card">
+            <video src="static/videos/realrobot_cube_success2.mp4" poster="static/images/poster_cube_success2.jpg"
+                   autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
         </div>
       </div>
 
