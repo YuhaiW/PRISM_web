@@ -483,6 +483,200 @@
     </div>
   </section>
 
+  <!-- ===================== INTERACTIVE: PoG FUSION ===================== -->
+  <style>
+    .pog-demo { display: flex; justify-content: center; margin-top: 1.6rem; }
+    .pog-demo .main-container { display: flex; flex-direction: column; gap: 22px; background: #2C2C2E; padding: 30px; border-radius: 22px; box-shadow: 0 18px 44px rgba(0,0,0,.35); max-width: 100%; box-sizing: border-box; }
+    .pog-demo .canvas-row { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+    .pog-demo .canvas-container { display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 100%; }
+    .pog-demo .canvas-title { font-size: 13px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: #A1A1A6; display: flex; align-items: center; gap: 8px; }
+    .pog-demo .live-indicator { width: 8px; height: 8px; background: #32D74B; border-radius: 50%; box-shadow: 0 0 8px #32D74B; animation: pogpulse 1s infinite; }
+    @keyframes pogpulse { 0% { opacity: .3; } 50% { opacity: 1; } 100% { opacity: .3; } }
+    .pog-demo canvas { background: #1C1C1E; border-radius: 16px; border: 1px solid #3A3A3C; box-shadow: inset 0 0 30px rgba(0,0,0,.6); display: block; height: auto; }
+    .pog-demo #canvas1D { width: 550px; max-width: 100%; aspect-ratio: 550 / 320; }
+    .pog-demo #canvas2D { width: 400px; max-width: 100%; aspect-ratio: 400 / 320; }
+    .pog-demo .legend { display: flex; justify-content: center; gap: 26px; font-size: 14px; padding: 14px; background: rgba(0,0,0,.3); border-radius: 12px; flex-wrap: wrap; color: #EBEBF5; }
+    .pog-demo .legend-item { display: flex; align-items: center; gap: 10px; }
+    .pog-demo .color-box { width: 20px; height: 4px; border-radius: 2px; }
+    .pog-demo .color-planner { height: 0; border-top: 2px dashed #8E8E93; }
+    .pog-demo .color-prior { background: #AF52DE; }
+    .pog-demo .color-fused { background: #FF2D55; box-shadow: 0 0 10px #FF2D55; }
+    .pog-demo .controls { display: flex; flex-direction: column; gap: 16px; padding: 22px; background: #1C1C1E; border-radius: 16px; border: 1px solid #3A3A3C; }
+    .pog-demo .control-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .pog-demo .control-label { width: 230px; font-size: 15px; font-weight: 500; color: #D1D1D6; }
+    .pog-demo .value-display { width: 56px; text-align: right; font-family: "SF Mono", ui-monospace, monospace; font-size: 17px; color: #AF52DE; font-weight: 700; }
+    .pog-demo input[type=range] { flex: 1 1 160px; margin: 0 16px; accent-color: #AF52DE; cursor: pointer; height: 6px; }
+  </style>
+
+  <section class="section">
+    <div class="container is-max-widescreen">
+      <div class="has-text-centered"><h2 class="title is-3 sec-title">Precision-Weighted Fusion</h2></div>
+      <p class="gallery-intro" style="margin-top:1rem;">
+        PRISM fuses the prior into the planner with a closed-form <b>Product of Gaussians</b>, weighting each belief by
+        its precision (inverse variance). Drag the sliders: a <b>confident</b> prior (small&nbsp;&sigma;) pulls the
+        sampling distribution tightly toward its intended action; an <b>uncertain</b> prior (large&nbsp;&sigma;) melts
+        back to vanilla MPPI. <i>Left:</i> the 1D derivation. <i>Right:</i> live MPPI samples drawn from the fused 2D distribution.
+      </p>
+
+      <div class="pog-demo">
+        <div class="main-container">
+          <div class="canvas-row">
+            <div class="canvas-container">
+              <div class="canvas-title">1D Product of Gaussians</div>
+              <canvas id="canvas1D" width="550" height="320"></canvas>
+            </div>
+            <div class="canvas-container">
+              <div class="canvas-title">2D Action Space <span class="live-indicator"></span></div>
+              <canvas id="canvas2D" width="400" height="320"></canvas>
+            </div>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><div class="color-box color-planner"></div> Vanilla MPPI</div>
+            <div class="legend-item"><div class="color-box color-prior"></div> PRISM Prior</div>
+            <div class="legend-item"><div class="color-box color-fused"></div> Fused Output</div>
+          </div>
+          <div class="controls">
+            <div class="control-group">
+              <div class="control-label">Prior Action Intent (&mu;):</div>
+              <input type="range" id="muSlider" min="-4" max="4" step="0.05" value="2.5">
+              <div class="value-display" id="muValue">2.50</div>
+            </div>
+            <div class="control-group">
+              <div class="control-label">Prior Uncertainty (&sigma;):</div>
+              <input type="range" id="sigmaSlider" min="0.2" max="8.0" step="0.05" value="0.6">
+              <div class="value-display" id="sigmaValue">0.60</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function () {
+    const c1 = document.getElementById('canvas1D'), c2 = document.getElementById('canvas2D');
+    if (!c1 || !c2) return;
+    const ctx1D = c1.getContext('2d'), ctx2D = c2.getContext('2d');
+    const muSlider = document.getElementById('muSlider'), sigmaSlider = document.getElementById('sigmaSlider');
+    const muValue = document.getElementById('muValue'), sigmaValue = document.getElementById('sigmaValue');
+
+    function scaleCanvas(canvas, ctx) {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      return { w: rect.width, h: rect.height };
+    }
+    let dim1D = scaleCanvas(c1, ctx1D), dim2D = scaleCanvas(c2, ctx2D);
+
+    const mu_pi_x = 0, mu_pi_y = 0, sigma_pi = 2.5, mu_p_y = 1.5, rangeLimit = 6;
+    const numSamples = 200; let stdSamples = []; let lastSampleTime = 0; const SAMPLE_INTERVAL = 120;
+
+    function generateSamples() {
+      stdSamples = [];
+      for (let i = 0; i < numSamples; i++) {
+        let u = 0, v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        const z0 = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        const z1 = Math.sqrt(-2 * Math.log(u)) * Math.sin(2 * Math.PI * v);
+        stdSamples.push({ dx: z0, dy: z1 });
+      }
+    }
+    function gaussian1D(x, mu, sigma) {
+      return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+    }
+
+    function draw1D(mu_p, sigma_p, mu_fused, sigma_fused) {
+      const { w, h } = dim1D;
+      ctx1D.clearRect(0, 0, w, h);
+      ctx1D.strokeStyle = '#3A3A3C'; ctx1D.lineWidth = 1;
+      ctx1D.beginPath();
+      ctx1D.moveTo(w / 2, 0); ctx1D.lineTo(w / 2, h);
+      ctx1D.moveTo(0, h - 30); ctx1D.lineTo(w, h - 30);
+      ctx1D.stroke();
+      const mapY = (y) => h - 30 - (y * h * 1.6);
+      const drawCurve = (mu, sigma, color, dash, lw, glow) => {
+        ctx1D.beginPath(); ctx1D.strokeStyle = color; ctx1D.lineWidth = lw; ctx1D.setLineDash(dash);
+        ctx1D.shadowColor = glow ? color : 'transparent'; ctx1D.shadowBlur = glow ? 10 : 0;
+        for (let px = 0; px <= w; px += 1) {
+          const x = (px / w) * (2 * rangeLimit) - rangeLimit;
+          const y = gaussian1D(x, mu, sigma);
+          px === 0 ? ctx1D.moveTo(px, mapY(y)) : ctx1D.lineTo(px, mapY(y));
+        }
+        ctx1D.stroke(); ctx1D.shadowBlur = 0; ctx1D.setLineDash([]);
+      };
+      drawCurve(mu_pi_x, sigma_pi, '#8E8E93', [8, 8], 2, false);
+      drawCurve(mu_p, sigma_p, '#AF52DE', [], 3, false);
+      drawCurve(mu_fused, sigma_fused, '#FF2D55', [], 4, true);
+    }
+
+    function draw2D(mu_p, sigma_p, mu_fused_x, sigma_fused) {
+      const { w, h } = dim2D;
+      ctx2D.clearRect(0, 0, w, h);
+      const mapX = (x) => (x + rangeLimit) / (2 * rangeLimit) * w;
+      const mapY = (y) => h - (y + rangeLimit) / (2 * rangeLimit) * h;
+      const scale = (s) => (s / (2 * rangeLimit)) * w;
+      ctx2D.strokeStyle = '#3A3A3C'; ctx2D.lineWidth = 1;
+      ctx2D.beginPath();
+      ctx2D.moveTo(w / 2, 0); ctx2D.lineTo(w / 2, h);
+      ctx2D.moveTo(0, h / 2); ctx2D.lineTo(w, h / 2);
+      ctx2D.stroke();
+      ctx2D.beginPath();
+      ctx2D.arc(mapX(mu_pi_x), mapY(mu_pi_y), scale(sigma_pi * 1.5), 0, 2 * Math.PI);
+      ctx2D.strokeStyle = '#8E8E93'; ctx2D.setLineDash([6, 6]); ctx2D.lineWidth = 2; ctx2D.stroke();
+      ctx2D.setLineDash([]);
+      let tau_pi = 1 / (sigma_pi * sigma_pi);
+      let tau_p = 1 / (sigma_p * sigma_p);
+      let tau_fused = tau_pi + tau_p;
+      let mu_fused_y = (mu_pi_y * tau_pi + mu_p_y * tau_p) / tau_fused;
+      ctx2D.beginPath();
+      ctx2D.arc(mapX(mu_p), mapY(mu_p_y), scale(sigma_p * 1.5), 0, 2 * Math.PI);
+      ctx2D.strokeStyle = 'rgba(175, 82, 222, 0.4)'; ctx2D.lineWidth = 2; ctx2D.stroke();
+      ctx2D.fillStyle = '#AF52DE';
+      ctx2D.beginPath(); ctx2D.arc(mapX(mu_p), mapY(mu_p_y), 5, 0, 2 * Math.PI); ctx2D.fill();
+      ctx2D.fillStyle = '#FF2D55';
+      stdSamples.forEach(pt => {
+        const sx = mu_fused_x + pt.dx * sigma_fused;
+        const sy = mu_fused_y + pt.dy * sigma_fused;
+        ctx2D.beginPath(); ctx2D.arc(mapX(sx), mapY(sy), 2.5, 0, 2 * Math.PI); ctx2D.fill();
+      });
+      ctx2D.shadowColor = '#FF2D55'; ctx2D.shadowBlur = 15;
+      ctx2D.fillStyle = '#FFFFFF';
+      ctx2D.beginPath(); ctx2D.arc(mapX(mu_fused_x), mapY(mu_fused_y), 6, 0, 2 * Math.PI); ctx2D.fill();
+      ctx2D.shadowBlur = 0;
+    }
+
+    function animate(timestamp) {
+      if (timestamp - lastSampleTime > SAMPLE_INTERVAL) { generateSamples(); lastSampleTime = timestamp; }
+      const mu_p = parseFloat(muSlider.value);
+      const sigma_p = parseFloat(sigmaSlider.value);
+      muValue.textContent = mu_p.toFixed(2);
+      sigmaValue.textContent = sigma_p.toFixed(2);
+      const tau_pi = 1 / (sigma_pi * sigma_pi);
+      const tau_p = 1 / (sigma_p * sigma_p);
+      const tau_fused = tau_pi + tau_p;
+      const sigma_fused = Math.sqrt(1 / tau_fused);
+      const mu_fused_x = (mu_pi_x * tau_pi + mu_p * tau_p) / tau_fused;
+      draw1D(mu_p, sigma_p, mu_fused_x, sigma_fused);
+      draw2D(mu_p, sigma_p, mu_fused_x, sigma_fused);
+      requestAnimationFrame(animate);
+    }
+
+    let rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => { dim1D = scaleCanvas(c1, ctx1D); dim2D = scaleCanvas(c2, ctx2D); }, 150);
+    });
+    window.addEventListener('load', () => { dim1D = scaleCanvas(c1, ctx1D); dim2D = scaleCanvas(c2, ctx2D); });
+
+    generateSamples();
+    requestAnimationFrame(animate);
+  })();
+  </script>
+
   <!-- ===================== MAIN RESULTS ===================== -->
   <section class="section hero is-light">
     <div class="container is-max-desktop">
