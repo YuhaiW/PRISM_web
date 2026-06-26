@@ -250,9 +250,47 @@
     .vid-card { background: #fff; border: 1px solid var(--soft-border); border-radius: 12px; padding: .55rem; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
     .vid-card video { width: 100%; border-radius: 8px; display: block; background: #000; }
     .vid-card .cap { font-size: .88rem; color: var(--muted); margin-top: .5rem; text-align: center; }
+
+    /* Sticky section nav */
+    html { scroll-behavior: smooth; }
+    .mini-nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.82);
+      backdrop-filter: saturate(180%) blur(12px); -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--soft-border); }
+    .mini-nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; padding: .5rem 1.1rem; }
+    .mini-nav-brand { font-weight: 800; font-size: 1.1rem; text-decoration: none; letter-spacing: .02em; }
+    .mini-nav-links { display: flex; gap: 1.15rem; flex-wrap: wrap; }
+    .mini-nav-links a { color: var(--muted); text-decoration: none; font-size: .92rem; font-weight: 600;
+      white-space: nowrap; transition: color .15s ease; }
+    .mini-nav-links a:hover { color: var(--prism-blue); }
+    section[id] { scroll-margin-top: 68px; }
+    @media (max-width: 640px) { .mini-nav-links { display: none; } }
+
+    /* Respect reduced-motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important; }
+      .live-indicator { animation: none !important; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Sticky section navigation -->
+  <nav class="mini-nav" aria-label="Section navigation">
+    <div class="mini-nav-inner">
+      <a class="mini-nav-brand prism-word" href="#main-content">PRISM</a>
+      <div class="mini-nav-links">
+        <a href="#why">Motivation</a>
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#real-robot">Real robot</a>
+        <a href="#BibTeX">BibTeX</a>
+      </div>
+    </div>
+  </nav>
 
   <!-- Scroll to Top Button -->
   <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
@@ -295,7 +333,6 @@
                   </a>
                 </span>
 
-                <!-- TODO: add arXiv ID, then re-enable this button -->
                 <span class="link-block">
                   <a href="https://arxiv.org/abs/2606.07974" target="_blank" class="external-link button is-normal is-rounded is-dark">
                     <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
@@ -369,6 +406,45 @@
     </div>
   </section>
 
+  <!-- ===================== WHY A PRIOR ===================== -->
+  <section class="section hero is-light" id="why">
+    <div class="container is-max-desktop">
+      <div class="has-text-centered"><h2 class="title is-3 sec-title">Why an action prior?</h2></div>
+
+      <div class="content has-text-centered" style="margin-top:1.2rem;">
+        <p style="max-width:760px; margin:0 auto; line-height:1.7; font-size:1.05rem;">
+          A perfect world model still plans poorly if it never proposes the right actions to evaluate.
+          <b>The bottleneck is not how well we simulate the future&mdash;it is which candidates we sample in the first place.</b>
+        </p>
+      </div>
+
+      <div class="pill-row">
+        <span class="prior-pill is-without"><span class="dot"></span>Without a prior</span>
+        <span class="pill-arrow">&rarr;</span>
+        <span class="prior-pill is-with"><span class="dot"></span>With an action prior</span>
+      </div>
+
+      <div class="figure-wrap" style="margin-top:1rem;">
+        <img src="static/images/why_prior.png" alt="Uninformed sampling fans out broadly, while an action prior concentrates candidates on promising directions">
+        <p class="figure-caption">
+          <b>Left&mdash;search blindly.</b> An uninformed sampling distribution fans out across the action space,
+          so a small planning budget is spent rediscovering directions the demonstrations already exhibit, and the
+          good action stays buried among the rest. <b>Right&mdash;search with intuition.</b> A state-conditioned
+          action prior collapses that fan into a tight envelope, focusing every sample on promising directions
+          &mdash; at almost no cost, since it reads from features the planner already computes.
+        </p>
+      </div>
+
+      <div class="content" style="margin-top:1.6rem;">
+        <p style="max-width:760px; margin:0 auto; line-height:1.7;">
+          That raises the real question: <b>where should this prior come from?</b> Training a separate model just to
+          guide the search adds machinery the planner does not need &mdash; so PRISM takes a different route. As the
+          next section shows, the world model already contains everything required.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== KEY IDEA ===================== -->
   <section class="section">
     <div class="container is-max-desktop">
@@ -384,7 +460,7 @@
           <div class="ic"><i class="fas fa-feather"></i></div>
           <h3>No architectural bloat</h3>
           <p>Prior work bolts on a separate visual encoder or a large VLM to get an action prior. PRISM needs only a
-          <b>~1M-parameter MLP</b> on cached features &mdash; about 1% of the world model, running in sub-millisecond time.</p>
+          <b>~1M-parameter MLP</b> on cached features &mdash; about 1% of the world model, adding effectively no inference cost.</p>
         </div>
         <div class="idea-card">
           <div class="ic"><i class="fas fa-shield-halved"></i></div>
@@ -397,7 +473,7 @@
   </section>
 
   <!-- ===================== ABSTRACT ===================== -->
-  <section class="section hero is-light">
+  <section class="section hero is-light" id="abstract">
     <div class="container is-max-desktop">
       <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
@@ -431,48 +507,8 @@
     </div>
   </section>
 
-  <!-- ===================== WHY A PRIOR ===================== -->
-  <section class="section">
-    <div class="container is-max-desktop">
-      <div class="has-text-centered"><h2 class="title is-3 sec-title">Why an action prior?</h2></div>
-
-      <div class="content has-text-centered" style="margin-top:1.2rem;">
-        <p style="max-width:760px; margin:0 auto; line-height:1.7; font-size:1.05rem;">
-          A perfect world model still plans poorly if it never proposes the right actions to evaluate.
-          <b>The bottleneck is not how well we simulate the future&mdash;it is which candidates we sample in the first place.</b>
-        </p>
-      </div>
-
-      <div class="pill-row">
-        <span class="prior-pill is-without"><span class="dot"></span>Without a prior</span>
-        <span class="pill-arrow">&rarr;</span>
-        <span class="prior-pill is-with"><span class="dot"></span>With an action prior</span>
-      </div>
-
-      <div class="figure-wrap" style="margin-top:1rem;">
-        <img src="static/images/why_prior.png" alt="Uninformed sampling fans out broadly, while an action prior concentrates candidates on promising directions">
-        <p class="figure-caption">
-          <b>Left&mdash;search blindly.</b> An uninformed sampling distribution fans out across the action space,
-          so a small planning budget is spent rediscovering directions the demonstrations already exhibit, and the
-          good action stays buried among the rest. <b>Right&mdash;search with intuition.</b> A state-conditioned
-          action prior collapses that fan into a tight envelope, focusing every sample on promising directions.
-          Crucially, both intuitions are read from the <b>same frozen encoder</b>&mdash;so this guidance comes at
-          no added inference cost.
-        </p>
-      </div>
-
-      <div class="content" style="margin-top:1.6rem;">
-        <p style="max-width:760px; margin:0 auto; line-height:1.7;">
-          This is why PRISM does not bolt on a separate visual encoder or a large VLM to obtain an action prior.
-          The exact same data&mdash;and the representations the world model has already learned&mdash;inherently
-          encode the agent's action intuition. PRISM simply reads it out and lets it shape where the planner looks.
-        </p>
-      </div>
-    </div>
-  </section>
-
   <!-- ===================== METHOD ===================== -->
-  <section class="section hero is-light">
+  <section class="section" id="method">
     <div class="container is-max-desktop">
       <div class="has-text-centered"><h2 class="title is-3 sec-title">How PRISM works</h2></div>
 
@@ -562,11 +598,11 @@
           <div class="canvas-row">
             <div class="canvas-container">
               <div class="canvas-title">1D Product of Gaussians</div>
-              <canvas id="canvas1D" width="550" height="320"></canvas>
+              <canvas id="canvas1D" width="550" height="320" role="img" aria-label="1D Product-of-Gaussians: the planner's broad default distribution and PRISM's prior multiply into a sharper fused distribution."></canvas>
             </div>
             <div class="canvas-container">
               <div class="canvas-title">2D Action Space <span class="live-indicator"></span></div>
-              <canvas id="canvas2D" width="400" height="320"></canvas>
+              <canvas id="canvas2D" width="400" height="320" role="img" aria-label="2D action space: live MPPI samples drawn from the fused distribution cluster around the prior's intended action."></canvas>
             </div>
           </div>
           <div class="legend">
@@ -717,7 +753,7 @@
   </script>
 
   <!-- ===================== MAIN RESULTS ===================== -->
-  <section class="section hero is-light">
+  <section class="section hero is-light" id="results">
     <div class="container is-max-desktop">
       <div class="has-text-centered"><h2 class="title is-3 sec-title">Results</h2></div>
       <p class="gallery-intro" style="margin-top:1rem;">
@@ -797,7 +833,7 @@
   </section>
 
   <!-- ===================== REAL ROBOT ===================== -->
-  <section class="section hero is-light">
+  <section class="section hero is-light" id="real-robot">
     <div class="container is-max-desktop">
       <div class="has-text-centered"><h2 class="title is-3 sec-title">Real-robot transfer</h2></div>
       <p class="gallery-intro" style="margin-top:1rem;">
@@ -886,5 +922,14 @@
   </footer>
 
   </main>
+
+  <!-- Honor reduced-motion: don't autoplay demo clips -->
+  <script>
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('video[autoplay]').forEach(function (v) {
+        v.removeAttribute('autoplay'); v.pause();
+      });
+    }
+  </script>
 </body>
 </html>
