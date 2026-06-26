@@ -193,6 +193,14 @@
     .figure-caption b { color: var(--ink); }
     .eq-block { background: #f7f8fa; border: 1px solid var(--soft-border); border-radius: 14px; padding: 1.1rem 1.3rem; margin: 1.4rem auto 0; max-width: 820px; overflow-x: auto; }
 
+    /* Before/after pill labels */
+    .pill-row { display: flex; justify-content: center; align-items: center; gap: 1.1rem; flex-wrap: wrap; margin: 1.4rem auto .4rem; }
+    .pill-row .pill-arrow { color: var(--muted); font-weight: 700; font-size: 1.1rem; }
+    .prior-pill { display: inline-flex; align-items: center; gap: .45em; font-weight: 700; font-size: .9rem; letter-spacing: .02em; padding: .32em 1em; border-radius: 999px; }
+    .prior-pill.is-without { background: #eef0f4; color: #5a5f6a; border: 1px solid var(--soft-border); }
+    .prior-pill.is-with { background: linear-gradient(90deg, var(--prism-blue), var(--prism-violet)); color: #fff; }
+    .prior-pill .dot { width: .5em; height: .5em; border-radius: 999px; background: currentColor; opacity: .8; }
+
     /* Responsive 16:9 video embed */
     .video-outer { max-width: 1100px; margin: 0 auto; }
     .video-wrap { position: relative; width: 100%; height: 0; padding-top: 56.25%; border-radius: 14px; overflow: hidden; border: 1px solid var(--soft-border); box-shadow: 0 10px 30px rgba(0,0,0,.16); background: #000; }
@@ -423,8 +431,48 @@
     </div>
   </section>
 
-  <!-- ===================== METHOD ===================== -->
+  <!-- ===================== WHY A PRIOR ===================== -->
   <section class="section">
+    <div class="container is-max-desktop">
+      <div class="has-text-centered"><h2 class="title is-3 sec-title">Why an action prior?</h2></div>
+
+      <div class="content has-text-centered" style="margin-top:1.2rem;">
+        <p style="max-width:760px; margin:0 auto; line-height:1.7; font-size:1.05rem;">
+          A perfect world model still plans poorly if it never proposes the right actions to evaluate.
+          <b>The bottleneck is not how well we simulate the future&mdash;it is which candidates we sample in the first place.</b>
+        </p>
+      </div>
+
+      <div class="pill-row">
+        <span class="prior-pill is-without"><span class="dot"></span>Without a prior</span>
+        <span class="pill-arrow">&rarr;</span>
+        <span class="prior-pill is-with"><span class="dot"></span>With an action prior</span>
+      </div>
+
+      <div class="figure-wrap" style="margin-top:1rem;">
+        <img src="static/images/why_prior.png" alt="Uninformed sampling fans out broadly, while an action prior concentrates candidates on promising directions">
+        <p class="figure-caption">
+          <b>Left&mdash;search blindly.</b> An uninformed sampling distribution fans out across the action space,
+          so a small planning budget is spent rediscovering directions the demonstrations already exhibit, and the
+          good action stays buried among the rest. <b>Right&mdash;search with intuition.</b> A state-conditioned
+          action prior collapses that fan into a tight envelope, focusing every sample on promising directions.
+          Crucially, both intuitions are read from the <b>same frozen encoder</b>&mdash;so this guidance comes at
+          no added inference cost.
+        </p>
+      </div>
+
+      <div class="content" style="margin-top:1.6rem;">
+        <p style="max-width:760px; margin:0 auto; line-height:1.7;">
+          This is why PRISM does not bolt on a separate visual encoder or a large VLM to obtain an action prior.
+          The exact same data&mdash;and the representations the world model has already learned&mdash;inherently
+          encode the agent's action intuition. PRISM simply reads it out and lets it shape where the planner looks.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== METHOD ===================== -->
+  <section class="section hero is-light">
     <div class="container is-max-desktop">
       <div class="has-text-centered"><h2 class="title is-3 sec-title">How PRISM works</h2></div>
 
