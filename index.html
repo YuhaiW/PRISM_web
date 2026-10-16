@@ -248,169 +248,53 @@
   <section class="sec" id="interactive">
     <div class="wrap narrow">
       <h2>Interactive: Product-of-Gaussians fusion</h2>
-      <p class="intro">The sliders set the prior's mean &mu; and standard deviation &sigma;. A small &sigma; pulls the fused distribution
-      to the prior; a large &sigma; leaves it at the planner default. The default is drawn with &sigma;<sub>&pi;</sub> = 2.5 for
-      visibility; the experiments use &sigma;<sub>&pi;</sub> = 1.0 in normalized action space.</p>
+      <p class="intro">Drag the prior mean in the action plane, or use the sliders. The planner default is \(\mathcal{N}(0, 1)\) per
+      coordinate, as in the experiments (\(\sigma_\pi = 1.0\), \(s = 1\)). The fused mean is \(w\,\mu_p\) with prior weight
+      \(w = \tau_p / (\tau_\pi + \tau_p)\). The 64 samples use the same standard-normal draws before and after fusion.</p>
     </div>
     <div class="wrap">
-      <div class="pog-demo">
-        <div class="main-container">
-          <div class="canvas-row">
-            <div class="canvas-container">
-              <div class="canvas-title">1D densities</div>
-              <canvas id="canvas1D" width="550" height="320" role="img" aria-label="1D Product of Gaussians: the planner's default distribution and the learned prior multiply into the fused distribution."></canvas>
-            </div>
-            <div class="canvas-container">
-              <div class="canvas-title">2D action space, fused samples <span class="live-indicator"></span></div>
-              <canvas id="canvas2D" width="400" height="320" role="img" aria-label="2D action space: samples drawn from the fused distribution."></canvas>
-            </div>
+      <div class="pog" id="pog">
+        <div class="pog-panels">
+          <div class="pog-panel">
+            <div class="pog-title"><span>Densities along one coordinate, a<sub>1</sub></span></div>
+            <svg data-id="svg1" viewBox="0 0 600 320" role="img" aria-label="Planner default, learned prior and fused densities along action coordinate a1."></svg>
           </div>
-          <div class="legend">
-            <div class="legend-item"><div class="color-box color-planner"></div> Planner default</div>
-            <div class="legend-item"><div class="color-box color-prior"></div> Learned prior</div>
-            <div class="legend-item"><div class="color-box color-fused"></div> Fused (PoG)</div>
+          <div class="pog-panel">
+            <div class="pog-title"><span>Action plane, 64 samples</span><span class="hint">drag the blue point</span></div>
+            <svg data-id="svg2" viewBox="0 0 320 320" role="img" aria-label="Sixty-four samples in the action plane before fusion in grey and after fusion in pink; the blue point is the prior mean."></svg>
           </div>
-          <div class="controls">
-            <div class="control-group">
-              <label class="control-label" for="muSlider">Prior mean (&mu;)</label>
-              <input type="range" id="muSlider" min="-4" max="4" step="0.05" value="2.5">
-              <div class="value-display" id="muValue">2.50</div>
+        </div>
+
+        <div class="pog-legend">
+          <span><i class="lg lg-def"></i>Planner default \(\mathcal{N}(0, \sigma_\pi^2)\)</span>
+          <span><i class="lg lg-pri"></i>Learned prior \(\mathcal{N}(\mu_p, (s\sigma_p)^2)\)</span>
+          <span><i class="lg lg-fus"></i>Fused proposal (PoG)</span>
+          <span><i class="dot dot-def"></i>sample before</span>
+          <span><i class="dot dot-fus"></i>sample after</span>
+        </div>
+
+        <div class="pog-bottom">
+          <div class="pog-controls">
+            <div class="pog-presets" role="group" aria-label="Prior confidence presets">
+              <button type="button" data-sp="0.3">Confident prior, σ<sub>p</sub> = 0.3</button>
+              <button type="button" data-sp="1">Comparable, σ<sub>p</sub> = 1</button>
+              <button type="button" data-sp="4">Uncertain prior, σ<sub>p</sub> = 4</button>
+              <button type="button" class="ghost" data-id="resample">Resample</button>
             </div>
-            <div class="control-group">
-              <label class="control-label" for="sigmaSlider">Prior std (&sigma;)</label>
-              <input type="range" id="sigmaSlider" min="0.2" max="8.0" step="0.05" value="0.6">
-              <div class="value-display" id="sigmaValue">0.60</div>
-            </div>
+            <label class="pog-row"><span>Prior std σ<sub>p</sub></span><input type="range" data-id="sp" min="0" max="100" step="0.5"><output data-id="spv"></output></label>
+            <label class="pog-row"><span>Prior mean, a<sub>1</sub></span><input type="range" data-id="m1" min="-3.5" max="3.5" step="0.05"><output data-id="m1v"></output></label>
+            <label class="pog-row"><span>Prior mean, a<sub>2</sub></span><input type="range" data-id="m2" min="-3.5" max="3.5" step="0.05"><output data-id="m2v"></output></label>
+          </div>
+          <div class="pog-readout" aria-live="polite">
+            <div><div class="v accent" data-id="w"></div><div class="k">prior weight w = τ<sub>p</sub> / (τ<sub>π</sub> + τ<sub>p</sub>)</div></div>
+            <div><div class="v" data-id="fm"></div><div class="k">fused mean (a<sub>1</sub>, a<sub>2</sub>) = w μ<sub>p</sub></div></div>
+            <div><div class="v" data-id="fs"></div><div class="k">fused std per coordinate</div></div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <script>
-  (function () {
-    const c1 = document.getElementById('canvas1D'), c2 = document.getElementById('canvas2D');
-    if (!c1 || !c2) return;
-    const ctx1D = c1.getContext('2d'), ctx2D = c2.getContext('2d');
-    const muSlider = document.getElementById('muSlider'), sigmaSlider = document.getElementById('sigmaSlider');
-    const muValue = document.getElementById('muValue'), sigmaValue = document.getElementById('sigmaValue');
-
-    function scaleCanvas(canvas, ctx) {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-      return { w: rect.width, h: rect.height };
-    }
-    let dim1D = scaleCanvas(c1, ctx1D), dim2D = scaleCanvas(c2, ctx2D);
-
-    const mu_pi_x = 0, mu_pi_y = 0, sigma_pi = 2.5, mu_p_y = 1.5, rangeLimit = 6;
-    const numSamples = 200; let stdSamples = []; let lastSampleTime = 0; const SAMPLE_INTERVAL = 120;
-
-    function generateSamples() {
-      stdSamples = [];
-      for (let i = 0; i < numSamples; i++) {
-        let u = 0, v = 0;
-        while (u === 0) u = Math.random();
-        while (v === 0) v = Math.random();
-        const z0 = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-        const z1 = Math.sqrt(-2 * Math.log(u)) * Math.sin(2 * Math.PI * v);
-        stdSamples.push({ dx: z0, dy: z1 });
-      }
-    }
-    function gaussian1D(x, mu, sigma) {
-      return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
-    }
-
-    function draw1D(mu_p, sigma_p, mu_fused, sigma_fused) {
-      const { w, h } = dim1D;
-      ctx1D.clearRect(0, 0, w, h);
-      ctx1D.strokeStyle = '#3A3A3C'; ctx1D.lineWidth = 1;
-      ctx1D.beginPath();
-      ctx1D.moveTo(w / 2, 0); ctx1D.lineTo(w / 2, h);
-      ctx1D.moveTo(0, h - 30); ctx1D.lineTo(w, h - 30);
-      ctx1D.stroke();
-      const mapY = (y) => h - 30 - (y * h * 1.6);
-      const drawCurve = (mu, sigma, color, dash, lw, glow) => {
-        ctx1D.beginPath(); ctx1D.strokeStyle = color; ctx1D.lineWidth = lw; ctx1D.setLineDash(dash);
-        ctx1D.shadowColor = glow ? color : 'transparent'; ctx1D.shadowBlur = glow ? 10 : 0;
-        for (let px = 0; px <= w; px += 1) {
-          const x = (px / w) * (2 * rangeLimit) - rangeLimit;
-          const y = gaussian1D(x, mu, sigma);
-          px === 0 ? ctx1D.moveTo(px, mapY(y)) : ctx1D.lineTo(px, mapY(y));
-        }
-        ctx1D.stroke(); ctx1D.shadowBlur = 0; ctx1D.setLineDash([]);
-      };
-      drawCurve(mu_pi_x, sigma_pi, '#8E8E93', [8, 8], 2, false);
-      drawCurve(mu_p, sigma_p, '#7B88F5', [], 3, false);
-      drawCurve(mu_fused, sigma_fused, '#F0437F', [], 4, true);
-    }
-
-    function draw2D(mu_p, sigma_p, mu_fused_x, sigma_fused) {
-      const { w, h } = dim2D;
-      ctx2D.clearRect(0, 0, w, h);
-      const mapX = (x) => (x + rangeLimit) / (2 * rangeLimit) * w;
-      const mapY = (y) => h - (y + rangeLimit) / (2 * rangeLimit) * h;
-      const scale = (s) => (s / (2 * rangeLimit)) * w;
-      ctx2D.strokeStyle = '#3A3A3C'; ctx2D.lineWidth = 1;
-      ctx2D.beginPath();
-      ctx2D.moveTo(w / 2, 0); ctx2D.lineTo(w / 2, h);
-      ctx2D.moveTo(0, h / 2); ctx2D.lineTo(w, h / 2);
-      ctx2D.stroke();
-      ctx2D.beginPath();
-      ctx2D.arc(mapX(mu_pi_x), mapY(mu_pi_y), scale(sigma_pi * 1.5), 0, 2 * Math.PI);
-      ctx2D.strokeStyle = '#8E8E93'; ctx2D.setLineDash([6, 6]); ctx2D.lineWidth = 2; ctx2D.stroke();
-      ctx2D.setLineDash([]);
-      let tau_pi = 1 / (sigma_pi * sigma_pi);
-      let tau_p = 1 / (sigma_p * sigma_p);
-      let tau_fused = tau_pi + tau_p;
-      let mu_fused_y = (mu_pi_y * tau_pi + mu_p_y * tau_p) / tau_fused;
-      ctx2D.beginPath();
-      ctx2D.arc(mapX(mu_p), mapY(mu_p_y), scale(sigma_p * 1.5), 0, 2 * Math.PI);
-      ctx2D.strokeStyle = 'rgba(123, 136, 245, 0.45)'; ctx2D.lineWidth = 2; ctx2D.stroke();
-      ctx2D.fillStyle = '#7B88F5';
-      ctx2D.beginPath(); ctx2D.arc(mapX(mu_p), mapY(mu_p_y), 5, 0, 2 * Math.PI); ctx2D.fill();
-      ctx2D.fillStyle = '#F0437F';
-      stdSamples.forEach(pt => {
-        const sx = mu_fused_x + pt.dx * sigma_fused;
-        const sy = mu_fused_y + pt.dy * sigma_fused;
-        ctx2D.beginPath(); ctx2D.arc(mapX(sx), mapY(sy), 2.5, 0, 2 * Math.PI); ctx2D.fill();
-      });
-      ctx2D.shadowColor = '#F0437F'; ctx2D.shadowBlur = 15;
-      ctx2D.fillStyle = '#FFFFFF';
-      ctx2D.beginPath(); ctx2D.arc(mapX(mu_fused_x), mapY(mu_fused_y), 6, 0, 2 * Math.PI); ctx2D.fill();
-      ctx2D.shadowBlur = 0;
-    }
-
-    function animate(timestamp) {
-      if (timestamp - lastSampleTime > SAMPLE_INTERVAL) { generateSamples(); lastSampleTime = timestamp; }
-      const mu_p = parseFloat(muSlider.value);
-      const sigma_p = parseFloat(sigmaSlider.value);
-      muValue.textContent = mu_p.toFixed(2);
-      sigmaValue.textContent = sigma_p.toFixed(2);
-      const tau_pi = 1 / (sigma_pi * sigma_pi);
-      const tau_p = 1 / (sigma_p * sigma_p);
-      const tau_fused = tau_pi + tau_p;
-      const sigma_fused = Math.sqrt(1 / tau_fused);
-      const mu_fused_x = (mu_pi_x * tau_pi + mu_p * tau_p) / tau_fused;
-      draw1D(mu_p, sigma_p, mu_fused_x, sigma_fused);
-      draw2D(mu_p, sigma_p, mu_fused_x, sigma_fused);
-      requestAnimationFrame(animate);
-    }
-
-    let rt;
-    window.addEventListener('resize', () => {
-      clearTimeout(rt);
-      rt = setTimeout(() => { dim1D = scaleCanvas(c1, ctx1D); dim2D = scaleCanvas(c2, ctx2D); }, 150);
-    });
-    window.addEventListener('load', () => { dim1D = scaleCanvas(c1, ctx1D); dim2D = scaleCanvas(c2, ctx2D); });
-
-    generateSamples();
-    requestAnimationFrame(animate);
-  })();
-  </script>
+  <script defer src="static/js/pog-demo.js"></script>
 
   <!-- ===================== PROBES ===================== -->
   <section class="sec alt" id="probes">
