@@ -2,58 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1200px; height: 630px; }
-  body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background:
-      radial-gradient(1100px 500px at 85% -10%, rgba(124,58,237,.10), transparent 60%),
-      radial-gradient(1000px 500px at 0% 120%, rgba(37,99,235,.10), transparent 60%),
-      #ffffff;
-    color: #15171c;
-    position: relative;
-    overflow: hidden;
-  }
-  .accent { position: absolute; top: 0; left: 0; right: 0; height: 10px;
-    background: linear-gradient(90deg, #2563eb, #7c3aed); }
-  .wrap { padding: 70px 80px 60px; height: 100%; display: flex; flex-direction: column; }
-  .title { font-size: 158px; font-weight: 900; letter-spacing: -.01em; line-height: 1;
-    background: linear-gradient(90deg, #2563eb, #7c3aed);
-    -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .subtitle { font-size: 40px; font-weight: 700; margin-top: 14px; color: #20242c; }
-  .badge { display: inline-block; margin-top: 22px; font-size: 24px; font-weight: 800;
-    color: #fff; background: linear-gradient(90deg, #2563eb, #7c3aed);
-    padding: 8px 22px; border-radius: 999px; letter-spacing: .03em; }
+  body { background: #F5F3ED; color: #141413; font-family: 'Geist', sans-serif; position: relative; overflow: hidden; }
+  .frame { position: absolute; inset: 0; padding: 56px 64px 48px; display: flex; flex-direction: column; }
+  .label { font-family: 'Geist Mono', monospace; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: #8A877E; }
+  .title { font-size: 128px; font-weight: 500; letter-spacing: -.035em; line-height: 1; margin-top: 34px; margin-left: -4px; }
+  .sub { font-size: 36px; font-weight: 400; letter-spacing: -.01em; color: #4A4843; margin-top: 16px; }
+  .sub em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
   .spacer { flex: 1; }
-  .stats { display: flex; gap: 22px; }
-  .pill { background: #fff; border: 1px solid #e7e7ef; border-radius: 18px;
-    padding: 18px 26px; box-shadow: 0 6px 22px rgba(20,30,60,.06); }
-  .pill .n { font-size: 44px; font-weight: 900; color: #2563eb; line-height: 1; }
-  .pill .l { font-size: 19px; color: #5a5f6a; margin-top: 8px; font-weight: 500; }
-  .foot { margin-top: 30px; font-size: 22px; color: #3a3f49; font-weight: 600; }
-  .foot .aff { color: #7a8090; font-weight: 500; font-size: 20px; margin-top: 4px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(14,14,13,.16); }
+  .stat { padding: 20px 20px 0; border-left: 1px solid rgba(14,14,13,.16); }
+  .stat:first-child { border-left: 0; padding-left: 0; }
+  .v { font-size: 34px; font-weight: 500; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+  .v .u { font-size: .45em; color: #8A877E; letter-spacing: 0; margin-left: .2em; }
+  .k { font-size: 15px; color: #85827A; margin-top: 12px; line-height: 1.5; }
+  .foot { display: flex; justify-content: space-between; margin-top: 30px; font-size: 17px; color: #4F4D47; }
+  .dot { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: rgba(14,14,13,.55); }
+  .accent { color: #D81B60; }
 </style>
 </head>
 <body>
-  <div class="accent"></div>
-  <div class="wrap">
-    <div>
-      <div class="title">PRISM</div>
-      <div class="subtitle">PRior-guided Imagination Sampling in World Models</div>
-    </div>
+  <div class="frame">
+    <div class="label">yuhaiw.github.io/PRISM_web</div>
+    <div class="title">PRISM</div>
+    <div class="sub">PRior-guided Imagination Sampling in world Models</div>
     <div class="spacer"></div>
     <div class="stats">
-      <div class="pill"><div class="n">+35 pp</div><div class="l">Cube success rate</div></div>
-      <div class="pill"><div class="n">+32 pp</div><div class="l">PushT success rate</div></div>
-      <div class="pill"><div class="n">1.0M</div><div class="l">prior-head params · ~1% of WM</div></div>
-      <div class="pill"><div class="n">≈0 ms</div><div class="l">added inference cost</div></div>
+      <div class="stat"><div class="v">+11.8–35.4<span class="u">pp</span></div><div class="k">over prior-free MPPI<br>4 simulated tasks</div></div>
+      <div class="stat"><div class="v">0.613–0.988</div><div class="k">probe R², one-step<br>action readout</div></div>
+      <div class="stat"><div class="v">0.51–0.59<span class="u">M</span></div><div class="k">prior-head<br>parameters</div></div>
+      <div class="stat"><div class="v">0.048<span class="u">ms</span></div><div class="k">prior inference<br>per replan</div></div>
     </div>
-    <div class="foot">
-      Wang · Xia · Zhou · Hu · Shi · Du · Ye
-      <div class="aff">Northeastern University · UC Berkeley · Qiyuan Lab · University of Florida</div>
-    </div>
+    <div class="foot"><span>Wang · Xia · Sun · Zhou · Hu · Shi · Du · Ye</span><span>Northeastern · UC Berkeley · UF · Qiyuan Lab</span></div>
   </div>
 </body>
 </html>
