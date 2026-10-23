@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/css/prism.css?v=20261023">
+  <link rel="stylesheet" href="static/css/prism.css?v=20261023c">
 
   <script>
     window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } };
@@ -100,8 +100,12 @@
   <!-- ===================== HEADER ===================== -->
   <section class="header">
     <div class="wrap">
-      <h1>PRISM</h1>
-      <p class="subtitle">PRior-guided Imagination Sampling in world Models</p>
+      <div class="hd">
+        <div class="hd-main">
+          <h1>PRISM</h1>
+          <p class="subtitle">PRior-guided Imagination Sampling <br>in world Models</p>
+        </div>
+        <div class="hd-side">
 
       <p class="authors">
         <a href="https://yuhaiw.github.io/" target="_blank" rel="noopener">Yuhai Wang</a><sup>1</sup>,
@@ -122,8 +126,9 @@
         <a class="btn" href="https://arxiv.org/abs/2606.07974" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>arXiv</a>
         <a class="btn" href="https://github.com/YuhaiW/prism-jepa" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.5 7.5 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.8-3.6 4 .3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg>Code</a>
         <a class="btn" href="https://huggingface.co/datasets/Rongxuan-Zhou/pusht_lewm_fr3" target="_blank" rel="noopener"><span aria-hidden="true">🤗</span>Dataset</a>
-        <a class="btn" href="https://huggingface.co/YuhaiW/prism-jepa-cube" target="_blank" rel="noopener"><span aria-hidden="true">🤗</span>Cube weights</a>
-        <a class="btn" href="https://huggingface.co/YuhaiW/prism-jepa-pusht" target="_blank" rel="noopener"><span aria-hidden="true">🤗</span>PushT weights</a>
+        <a class="btn" href="https://github.com/YuhaiW/prism-jepa#data-and-pretrained-weights" target="_blank" rel="noopener" title="Hugging Face weights for PushT, Cube, TwoRoom and Reacher"><span aria-hidden="true">🤗</span>Weights</a>
+      </div>
+        </div>
       </div>
 
       <div class="agent" id="reproduce">
