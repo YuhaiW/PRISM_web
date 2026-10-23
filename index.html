@@ -82,12 +82,12 @@
     <div class="wrap">
       <a class="wordmark" href="#top">PRISM</a>
       <nav aria-label="Sections">
+        <a class="sec-link" href="#reproduce">Reproduce</a>
         <a class="sec-link" href="#overview">Overview</a>
         <a class="sec-link" href="#method">Method</a>
         <a class="sec-link" href="#results">Results</a>
         <a class="sec-link" href="#analyses">Analyses</a>
         <a class="sec-link" href="#real-robot">Real robot</a>
-        <a class="sec-link" href="#reproduce">Reproduce</a>
         <a class="sec-link" href="#citation">Citation</a>
         <a href="static/pdfs/paper.pdf" target="_blank" rel="noopener">Paper</a>
         <a href="https://github.com/YuhaiW/prism-jepa" target="_blank" rel="noopener">Code</a>
@@ -124,6 +124,22 @@
         <a class="btn" href="https://huggingface.co/datasets/Rongxuan-Zhou/pusht_lewm_fr3" target="_blank" rel="noopener"><span aria-hidden="true">🤗</span>Dataset</a>
         <a class="btn" href="https://huggingface.co/YuhaiW/prism-jepa-cube" target="_blank" rel="noopener"><span aria-hidden="true">🤗</span>Cube weights</a>
         <a class="btn" href="https://huggingface.co/YuhaiW/prism-jepa-pusht" target="_blank" rel="noopener"><span aria-hidden="true">🤗</span>PushT weights</a>
+      </div>
+
+      <div class="agent" id="reproduce">
+        <h2>Reproduce with an AI agent</h2>
+        <p>Paste this prompt into Claude Code, Codex, Cursor or another coding agent. The agent follows
+        <a href="https://github.com/YuhaiW/prism-jepa/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS.md</a>,
+        which lists the expected result of every check. Change the task as needed; for the paper's full Fig. 5, use
+        “Reproduce Fig. 5 of the PRISM paper (arXiv 2606.07974) for all four tasks on this machine.” (about 6 GPU-hours).</p>
+        <div class="bib">
+          <button class="copy" type="button" data-copy="#agent-prompt">Copy</button>
+<pre id="agent-prompt">Reproduce the PRISM results (arXiv 2606.07974) for the TwoRoom task on this machine.
+1. Clone https://github.com/YuhaiW/prism-jepa and follow AGENTS.md in the repo root.
+2. Before downloading datasets (3-46 GB each) or installing system packages, tell me what and how large, and wait for my OK.
+3. Run the quick check first and report a table: task, planner, K, seed, your success rate, expected success rate.
+4. Do not change configs, seeds or hyperparameters. If a step fails, report the error and the log path instead of modifying the method code.</pre>
+        </div>
       </div>
 
       <div class="stats">
@@ -677,29 +693,8 @@
     </div>
   </section>
 
-  <!-- ===================== REPRODUCE ===================== -->
-  <section class="sec alt" id="reproduce">
-    <div class="wrap narrow">
-      <h2>Reproduce with an AI agent</h2>
-      <p class="intro">The repository's <code>AGENTS.md</code> gives coding agents (Claude Code, Codex, Cursor, …) step-by-step
-      instructions and the expected numbers for every check. Paste this prompt into your agent and change the task if needed.
-      For the full Fig. 5, replace the first line with “Reproduce Fig. 5 of the PRISM paper (arXiv 2606.07974) for all four
-      tasks on this machine.” and expect about 6 GPU-hours.</p>
-      <div class="bib" style="margin-top:20px;">
-        <button class="copy" type="button" data-copy="#agent-prompt">Copy</button>
-<pre id="agent-prompt">Reproduce the PRISM results (arXiv 2606.07974) for the TwoRoom task on this machine.
-1. Clone https://github.com/YuhaiW/prism-jepa and follow AGENTS.md in the repo root.
-2. Before downloading datasets (3-46 GB each) or installing system packages, tell me what and how large, and wait for my OK.
-3. Run the quick check first and report a table: task, planner, K, seed, your success rate, expected success rate.
-4. Do not change configs, seeds or hyperparameters. If a step fails, report the error and the log path instead of modifying the method code.</pre>
-      </div>
-      <p class="note">Without an agent, the same steps are <code>scripts/download.sh</code>, <code>scripts/train.sh</code> and
-      <code>scripts/test.sh</code>; see the <a href="https://github.com/YuhaiW/prism-jepa" target="_blank" rel="noopener">README</a>.</p>
-    </div>
-  </section>
-
   <!-- ===================== CITATION ===================== -->
-  <section class="sec" id="citation">
+  <section class="sec alt" id="citation">
     <div class="wrap narrow">
       <h2>BibTeX</h2>
       <div class="bib">

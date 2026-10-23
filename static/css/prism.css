@@ -83,6 +83,12 @@ section[id] { scroll-margin-top: 64px; }
 .btn svg { width: 15px; height: 15px; flex: none; }
 @media (max-width: 640px) { .header { padding: 44px 0 28px; } .header h1 { font-size: 46px; } .header .subtitle { font-size: 19px; } .authors { font-size: 16px; } }
 
+.agent { max-width: 900px; margin: 36px auto 0; text-align: left; scroll-margin-top: 72px; }
+.agent h2 { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.agent p { font-size: 15px; line-height: 1.6; color: var(--ink-2); margin: 6px 0 14px; }
+.agent p a { color: var(--ink); }
+.agent .bib { padding-top: 46px; }
+.agent .bib pre { font-size: 13px; }
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 900px; margin: 40px auto 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .stat { padding: 18px 12px; text-align: center; }
 .stat + .stat { border-left: 1px solid var(--rule); }
